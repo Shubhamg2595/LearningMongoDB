@@ -1,0 +1,1304 @@
+1. to create a new database:
+
+use db_name
+> use mydb
+
+2. show dbs
+>display db name
+
+3. inserting a new doc in db
+>db.movie.insert({'name':'shubham'})
+WriteResult({ "nInserted" : 1 })
+
+4. to drop a database
+>db.dropDatabase()
+{ "dropped" : "mydb", "ok" : 1 }
+---------------------------------------------------
+
+5. createCollection(name,options):
+
+used to create a collection
+
+Parameter	Type		Description
+Name		String		Name of the collection to be created
+Options		Document	(Optional) Specify options about memory size and indexing
+
+
+OPTIONS:
+
+A. capped: Boolean
+
+If true, enables a capped collection. 
+Capped collection is a fixed size collection 
+that automatically overwrites its oldest entries 
+when it reaches its maximum size. 
+
+If you specify true, you need to specify 
+size parameter also.
+
+B.autoIndexId	Boolean	
+(Optional) If true, automatically create index 
+on _id field.s Default value is false.
+
+
+C. size	number
+
+Specifies a maximum size in bytes for a 
+capped collection. 
+
+If capped is true, then you need to
+ specify this field also.
+
+D. max	number	
+Specifies the maximum number of documents 
+allowed in the capped collection.
+
+--------------
+practical use of createCollection()
+----------------
+
+> db.createCollection("mycollection")
+{ "ok" : 1 }
+
+> show collections
+mycollection
+
+
+--
+creating a capped collection
+--
+> db.createCollection("mycol",{capped:true,autoIndexId:true,size:6142800,max:10000})
+{
+        "ok" : 1
+}
+> show collections
+mycol
+mycollection
+
+
+"In MongoDB, you don't need to create collection. 
+MongoDB creates collection automatically, when you
+insert some document."
+
+> db.student.insert({'name':'shubham'})
+WriteResult({ "nInserted" : 1 })
+> show collections
+mycol
+mycollection
+student
+
+'a new collection student is cretd in database'
+
+--------------------------------------------------------
+
+6. db.COLLECTION_NAME.drop()
+: is used to drop a collection from the database.
+
+> show collections
+mycol
+mycollection
+student
+
+> db.mycol.drop()
+true
+
+> show collections
+mycollection
+student
+
+
+----------------------------------------------------
+
+7. DATATYPES IN MONGODB
+MongoDB supports many datatypes. Some of them are −
+
+String − This is the most commonly used datatype to store the data. String in MongoDB must be UTF-8 valid.
+
+Integer − This type is used to store a numerical value. Integer can be 32 bit or 64 bit depending upon your server.
+
+Boolean − This type is used to store a boolean (true/ false) value.
+
+Double − This type is used to store floating point values.
+
+Min/ Max keys − This type is used to compare a value against the lowest and highest BSON elements.
+
+Arrays − This type is used to store arrays or list or multiple values into one key.
+
+Timestamp − ctimestamp. This can be handy for recording when a document has been modified or added.
+
+Object − This datatype is used for embedded documents.
+
+Null − This type is used to store a Null value.
+
+Symbol − This datatype is used identically to a string; however, it's generally reserved for languages that use a specific symbol type.
+
+Date − This datatype is used to store the current date or time in UNIX time format. You can specify your own date time by creating object of Date and passing day, month, year into it.
+
+Object ID − This datatype is used to store the document’s ID.
+
+Binary data − This datatype is used to store binary data.
+
+Code − This datatype is used to store JavaScript code into the document.
+
+Regular expression − This datatype is used to store regular expression.
+
+----------------------------------------------------------------
+
+8. db.COLLECTION_NAME.insert(document)
+
+'its better to remove all spaces when running throug console'
+db.mycol.insert({title: 'MongoDB Overview',description: 'MongoDB is no sql database',by: 'tutorials point',url: 'http://www.tutorialspoint.com',tags: ['mongodb', 'database', 'NoSQL'],likes: 100})
+
+above command created a new colelctions and 
+added a new document in
+ it
+ 
+ -------------------------------------------------------
+ 9. Query a Document
+ 
+ The find() Method
+ 
+To query data from MongoDB collection, 
+you need to use MongoDB's find() method.
+
+Syntax
+The basic syntax of find() method is as follows −
+
+>db.COLLECTION_NAME.find()
+find() method will display all the documents
+ in a non-structured way.
+
+The pretty() Method
+To display the results in a formatted way, you can use pretty() method.
+
+
+Syntax
+>db.mycol.find().pretty()
+this command returns the all the documents(rows) present in a colelctions
+> db.mycol.find().pretty()
+{
+        "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38"),
+        "title" : "MongoDB Overview",
+        "description" : "MongoDB is no sql database",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+
+
+db.mycol.insert({title: 'Using Find()',description: 'use to query mysqlDB',by: 'tutorials point',url: 'http://www.tutorialspoint.com',tags: ['mongodb', 'database', 'NoSQL','find'],likes: 200})
+
+--------------
+RDBMS Where Clause Equivalents in MongoDB
+--------------
+A)
+db.mycol.find({{"<key>":"<value>"}}).pretty()
+
+> db.mycol.find({'title':'MongoDB Overview'}).pretty()
+{
+        "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38"),
+        "title" : "MongoDB Overview",
+        "description" : "MongoDB is no sql database",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+
+
+B)
+> db.mycol.find({"likes":{$lt:200}}).pretty()
+{
+        "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38"),
+        "title" : "MongoDB Overview",
+        "description" : "MongoDB is no sql database",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+
+C)
+db.mycol.find({"likes":{$gt:100}}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using Find()",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+
+D)similarly we have:
+$lte
+$gte
+$ne
+
+
+--------------
+AND in MongoDB
+--------------
+
+In the find() method, if you pass multiple keys 
+by separating them by ',' then MongoDB treats it 
+as AND condition.
+ Following is the basic syntax of AND −
+
+>db.mycol.find(
+   {
+      $and: [
+         {key1: value1}, {key2:value2}
+      ]
+   }
+).pretty()
+
+
+>db.mycol.find({$and:[{"by":"tutorials point","likes":{$gt:100}}]}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using Find()",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+
+-------------
+OR in MONGODB
+-------------
+>db.mycol.find(
+   {
+      $or: [
+         {key1: value1}, {key2:value2}
+      ]
+   }
+).pretty()
+
+
+ db.mycol.find({$or:[{"by":"tutorials point","likes":{$gt:100}}]}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using Find()",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+
+"i dont know why,but or condition is working only when both conditions are true"
+
+
+----------------
+USING AND and OR TOGETHER
+----------------
+where likes>10 AND (by = 'tutorials point' OR title = 'MongoDB Overview')
+
+db.mycol.find({"likes":{$gt:100},$or:[{"by":"tutorials pt"},{"title":"Using Find()"}]}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using Find()",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+
+
+db.mycol.find({"likes":{$gt:100},$and:[{"by":"tutorials pt"},{"title":"Using Find()"}]}).pretty()
+"above statement wont work as both conditions in and statement must be true"
+
+
+
+
+
+
+------------------------------------------------------
+10. UPDATE DOCUMENT
+MongoDB's update() and save() methods are used to
+ update document into a collection. 
+ The update() method updates the values in the 
+ existing document while the save() method replaces 
+ the existing document with the document passed in 
+ save() method.
+
+
+-----------
+updating a single document
+-----------
+
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using Find()",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+syntax
+> db.mycol.update({'title':'Using Find()'},{$set:{'title':'Using find() Method'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.mycol.find({'likes':200}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using find() Method",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+
+-------------
+UPDATING QUERIES USING THEIR UNIQUE OBJECT ID
+-------------
+ db.mycol.update({"_id" : ObjectId("5b8bc923fcf424299eb54f5a")},{$set:{'title':'using this to learn remove method'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+-------------
+UPDATING MULTIPLE DOCUMENT
+-------------
+y default, MongoDB will update only a single document. 
+To update multiple documents, you need to set a\
+ parameter 'multi' to true.
+
+>db.mycol.update({'title':'MongoDB Overview'},
+   {$set:{'title':'New MongoDB Tutorial'}},{multi:true})
+   
+-------------
+SAVE METHOD
+-------------
+MongoDB Save() Method
+The save() method replaces the existing document 
+with the new document passed in the save() method.
+
+Syntax
+The basic syntax of MongoDB save() method is 
+shown below −
+
+>db.COLLECTION_NAME.save({_id:ObjectId(),NEW_DATA})
+Example
+Following example will replace the document with
+ the _id '5983548781331adf45ec5'.
+
+>db.mycol.save(
+   {
+      "_id" : ObjectId(5983548781331adf45ec7), "title":"Tutorials Point New Topic",
+         "by":"Tutorials Point"
+   }
+)
+>db.mycol.find()
+{ "_id" : ObjectId(5983548781331adf45ec5), "title":"Tutorials Point New Topic",
+   "by":"Tutorials Point"}
+{ "_id" : ObjectId(5983548781331adf45ec6), "title":"NoSQL Overview"}
+{ "_id" : ObjectId(5983548781331adf45ec7), "title":"Tutorials Point Overview"}
+>
+
+
+-------------------------------------------------------------------------
+
+
+11. DELETE DOCUMENT
+-------------------
+The remove() Method
+--------------------
+MongoDB's remove() method is used to remove a 
+document from the collection. 
+
+remove() method accepts two parameters.
+ One is deletion criteria and second is justOne flag.
+ 
+
+deletion criteria − 
+(Optional) deletion criteria according to documents 
+will be removed.
+
+justOne − 
+(Optional) if set to true or 1, then remove only 
+one document.
+
+
+
+db.mycol.remove({"title" : "using this to learn remove method"})
+WriteResult({ "nRemoved" : 1 })
+
+
+-------------
+Remove Only One
+-------------
+If there are multiple records and you want to delete only the first 
+record, then set justOne parameter in remove() method.
+
+>db.COLLECTION_NAME.remove(DELETION_CRITERIA,1)
+-----------------------
+Remove All Documents
+-----------------------
+If you don't specify deletion criteria, 
+then MongoDB will delete whole documents from 
+the collection. This is equivalent of SQL's truncate command.
+
+>db.mycol.remove()
+>db.mycol.find()
+
+-------------------------------------------------------
+12. MONGODB- PROJECTION
+
+---------
+DEFN OF PROJECTION
+---------
+In MongoDB, projection means selecting only the
+ necessary data rather than selecting whole of the
+ data of a document. If a document has 5 fields and 
+ you need to show only 3, then select only 3 
+ fields from them.
+
+ -----------------
+ The find() Method
+ -----------------
+ In MongoDB, when you execute find() method,
+ then it displays all fields of a document.
+ To limit this, you need to set a list of fields
+ with value 1 or 0. 1 is used to  show the field
+ while 0 is used to hide the fields.
+SYNTAX
+ >db.COLLECTION_NAME.find({},{KEY:1})
+ 
+ -------
+ example1
+ -------
+ >db.mycol.find({},{'title':0}).pretty()
+{
+        "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38"),
+        "description" : "MongoDB is no sql database",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+{ "_id" : ObjectId("5b8bced7f953f66426136f59"), "data" : "shubham" }
+ 
+ -----------
+ example2
+ here  i have two different kind of docs
+ and i only want to see data of my second document
+ -----------
+ 
+ > db.mycol.find({},{'data':1}).pretty()
+{ "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38") }
+{ "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39") }
+{ "_id" : ObjectId("5b8bced7f953f66426136f59"), "data" : "shubham" }
+
+> db.mycol.find({},{'data':1,'_id':0}).pretty()
+{ }
+{ }
+{ "data" : "shubham" }
+
+--------------------------------------------------
+
+13. LIMITING RECORDS
+
+---------------
+The Limit() Method
+--------------
+To limit the records in MongoDB, you need to use
+ limit() method. The method accepts one number type
+ argument, which is the number of documents that 
+ you want to be displayed.
+
+Syntax
+The basic syntax of limit() method is as follows −
+
+>db.COLLECTION_NAME.find().limit(NUMBER)
+
+
+> db.mycol.find({},{'_id':0,'title':1})
+{ "title" : "MongoDB Overview" }
+{ "title" : "Using find() Method" }
+{  }
+
+
+-----------
+example
+-----------
+> db.mycol.find({},{'_id':0,'title':1}).limit(1)
+{ "title" : "MongoDB Overview" }
+> db.mycol.find({},{'_id':0,'title':1}).limit(2)
+{ "title" : "MongoDB Overview" }
+{ "title" : "Using find() Method" }
+> db.mycol.find({},{'_id':0,'title':1}).limit(3)
+{ "title" : "MongoDB Overview" }
+{ "title" : "Using find() Method" }
+{  }
+
+------------------------
+MongoDB Skip() Method
+------------------------
+Apart from limit() method, there is one more
+method skip() which also accepts number type 
+argument and is used to skip the number of documents.
+
+Syntax
+The basic syntax of skip() method is as follows −
+
+>db.COLLECTION_NAME.find().limit(NUMBER).skip(NUMBER)
+Example
+
+Following example will display only the
+ second document.
+
+> db.mycol.find({},{'_id':0,'title':1}).limit(3).skip(1)
+{ "title" : "Using find() Method" }
+{  }
+
+
+-----------------------------------------------------
+14. Sorting Records
+
+The sort() Method
+To sort documents in MongoDB, you need to
+use sort() method. 
+The method accepts a document containing a list of
+fields along with their sorting order. 
+
+To specify sorting order 1 and -1 are used. 
+
+1 is used for ascending order 
+-1 is used for descending order.
+
+ "if you don't specify the sorting preference, 
+ then sort() method will display the documents 
+ in ascending order."
+
+--descending
+> db.mycol.find().sort({'likes':-1}).pretty()
+{
+        "_id" : ObjectId("5b8bb26d07d707b1bf4f8a39"),
+        "title" : "Using find() Method",
+        "description" : "use to query mysqlDB",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "likes" : 200
+}
+{
+        "_id" : ObjectId("5b8bac4c07d707b1bf4f8a38"),
+        "title" : "MongoDB Overview",
+        "description" : "MongoDB is no sql database",
+        "by" : "tutorials point",
+        "url" : "http://www.tutorialspoint.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+{ "_id" : ObjectId("5b8bced7f953f66426136f59"), "data" : "shubham" }
+>
+----------------------------------------------------------
+15. MongoDB - Indexing
+
+Indexes support the efficient resolution of queries. 
+Without indexes, MongoDB must scan every document
+ of a collection to select those documents that
+ match the query statement. 
+ This scan is highly inefficient and require
+ MongoDB to process a large volume of data.
+
+ 
+Indexes are special data structures, 
+that store a small portion of the dataset in an
+easy-to-traverse form. 
+The index stores the value of a specific field or 
+set of fields, ordered by the value of the field 
+as specified in the index.
+
+
+-----------------
+The ensureIndex() Method
+-----------------
+To create an index you need to use ensureIndex()
+method of MongoDB
+
+Syntax
+The basic syntax of ensureIndex() method
+is as follows().
+
+>db.COLLECTION_NAME.ensureIndex({KEY:1})
+
+Here key is the name of the field on which you want to create index and 1 is for ascending order. To create index in descending order you need to use -1.
+
+Example
+>db.mycol.ensureIndex({"title":1})
+>
+In ensureIndex() method you can pass multiple fields,
+to create index on multiple fields.
+
+>db.mycol.ensureIndex({"title":1,"description":-1})
+ 
+visit this link to open Options available for ensureIndex
+"https://www.tutorialspoint.com/mongodb/mongodb_indexing.htm"
+ 
+ 
+ 
+ 
+ -----------------------------------------------------------
+ 
+ 16. Aggregation
+ 
+ Aggregations operations process data records and 
+ return computed results. Aggregation operations 
+ group values from multiple documents together, 
+ and can perform a variety of operations on the 
+ grouped data to return a single result. 
+ 
+ In SQL count(*) and with group by is an equivalent
+ of mongodb aggregation.
+ 
+ 
+ 
+db.mycol.insert({title: 'Neo4j Overview',description: '4j is no sql database',by: 'Neo4j',url: 'http://www.tutorialspoint.com',tags: ['neo4j', 'database', 'NoSQL'],likes: 100})
+
+to display a list stating how many tutorials are
+ written by each user, then you will use the 
+ following aggregate() method:
+ 
+ ------------
+ examples
+ ------------
+> db.mycol.aggregate([{$group:{_id:"$by",number_of_tutorials:{$sum:1}}}]).pretty()
+{ "_id" : null, "number_of_tutorials" : 1 }
+{ "_id" : "Neo4j", "number_of_tutorials" : 1 }
+{ "_id" : "tutorials point", "number_of_tutorials" : 2 }
+
+
+> db.mycol.aggregate([{$group:{_id:"$tags",number_of_tags:{$sum:1}}}]).pretty()
+{ "_id" : [ "neo4j", "database", "NoSQL" ], "number_of_tags" : 1 }
+{ "_id" : null, "number_of_tags" : 1 }
+{
+        "_id" : [
+                "mongodb",
+                "database",
+                "NoSQL",
+                "find"
+        ],
+        "number_of_tags" : 1
+}
+{ "_id" : [ "mongodb", "database", "NoSQL" ], "number_of_tags" : 1 }
+
+
+> db.mycol.aggregate([{$group:{_id:"$title",number_of_titles:{$sum:1}}}]).pretty()
+{ "_id" : "Neo4j Overview", "number_of_titles" : 1 }
+{ "_id" : null, "number_of_titles" : 1 }
+{ "_id" : "Using find() Method", "number_of_titles" : 1 }
+{ "_id" : "MongoDB Overview", "number_of_titles" : 1 }
+>
+ 
+ 
+ ------------------
+ relating sql groupby with Mongo Aggregation
+ ------------------
+ 
+ --SQL`
+ "select count(*) as number_of_urls from
+ mycol group by url"
+ 
+ --mongoDB
+ db.mycol.aggregate([{$group:{_id:"$url",number_of_urls:{$sum:1}}}]).pretty()
+{ "_id" : "http://www.tutorialspoint.com", "number_of_urls" : 3 }
+ 
+--here $sum is used as count and its value 1 specifies the starting point
+ 
+ ----------
+ $avg
+ ----------
+ > db.mycol.aggregate([{$group:{_id:"likes","avg_of_likes":{$avg:"$likes"}}}])
+{{ "_id" : "likes", "avg_of_likes" : 200 }
+ 
+ ---------
+ $min
+ ---------
+ 
+ > db.mycol.aggregate([{$group:{_id:"$title",minimum_likes:{$min:"$likes"}}}])
+{ "_id" : "Neo4j Overview", "minimum_likes" : 300 }
+{ "_id" : "Using find() Method", "minimum_likes" : 200 }
+{ "_id" : "MongoDB Overview", "minimum_likes" : 100 }
+
+"NOTICE THE DIFFERENCE BETWEEN USING $ AND WITHOUT $ SIGN WITH _ID"
+> db.mycol.aggregate([{$group:{_id:"title",minimum_likes:{$min:"$likes"}}}])
+{ "_id" : "title", "minimum_likes" : 100 }
+ 
+ 
+ ------------
+ $max
+ ------------
+  db.mycol.aggregate([{$group:{_id:"title",minimum_likes:{$max:"$likes"}}}])
+{ "_id" : "title", "minimum_likes" : 300 }
+ 
+ 
+ -------------
+ $first
+ -------------
+ > db.mycol.aggregate([{$group : {_id : "$by", first_url : {$first : "$url"}}}])
+{ "_id" : "Neo4j", "first_url" : "http://www.tutorialspoint.com" }
+{ "_id" : "tutorials point", "first_url" : "http://www.tutorialspoint.com" }
+"WHEN $SIGN IS USED, I GOT FIRST APPEARANCE OF EACH UNIQUE BY IN MY COLLECTION"
+
+
+> db.mycol.aggregate([{$group : {_id : "by", first_url : {$first : "$url"}}}])
+{ "_id" : "by", "first_url" : "http://www.tutorialspoint.com" }
+
+"WITHOUT USING $,I ONLY GET THE FIRST "BY" DATA IN COLLECTION"
+
+----------
+$LAST
+-------------
+----------------------------------------------------------------
+
+17. HOW TO RUN JAVASCRIPT FUNCTION IN MONGO CONSOLE TO POPULATE A DATABASE WITH RANDOMLY GENERATED DATA
+
+>use people
+
+(function() {
+  var names = [
+    'Yolanda',
+    'Iska',
+    'Malone',
+    'Frank',
+    'Foxton',
+    'Pirate',
+    'Poppelhoffen',
+    'Elbow',
+    'Fluffy',
+    'Paphat'
+  ]
+  var randName = function() {
+    var n = names.length;
+    return [
+      names[Math.floor(Math.random() * n)],
+      names[Math.floor(Math.random() * n)]
+    ].join(' ');
+  }
+  var randAge = function(n) {
+    return Math.floor(Math.random() * n);
+  }
+  for (var i = 0; i < 1000; ++i) {
+    var person = {
+      name: randName(),
+      age: randAge(100)
+    }
+    if (Math.random() > 0.8) {
+      person.cat = {
+        name: randName(),
+        age: randAge(18)
+      }
+    }
+    db.people.insert(person);
+  };
+})();
+
+-----------------------------------------------------
+18. Sample Exercises
+
+----------------
+1. COUNTING THE DOCS PRESENT IN PEOPLE DB
+----------------
+
+>db.people.find().count()
+1000
+-------------------------------
+>DISPLAYING DATA OF ONLY THOSE DOCS,FOR WHICH A FILE EXIST
+-------------------------------
+-----------
+$exists
+-----------
+ db.people.find({"cat":{$exists:true}},{"_id":0}).pretty()
+ 
+ 
+ 
+--------------------------------
+2.Find all the people who are eligible for a bus pass (people older than 65) 
+--------------------------------
+
+db.people.find({"age":{$gt:65}},{'_id':0,'cat':0}).pretty()
+
+
+-----------------------------
+3. Find all the teenagers, greater than 12 and less than 20.
+------------------------------
+>db.people.find({"age":{$gt:12,$lt:20}},{'_id':0,'cat':0})
+
+
+--------------------------------------------------
+4.Exercise - $exists
+
+Find all the people with cats.
+
+>db.people.find({"cat":{$exists:true}},{'_id':0,'age':0})
+{ "name" : "Pirate Fluffy", "cat" : { "name" : "Frank Pirate", "age" : 2 } }
+
+Find all the pensioners with cats
+>db.people.find({"age":{$gt:65},'cat':{$exists:true}},{'_id':0}).pretty().
+
+Find all the teenagers with teenage cats
+
+>db.people.find({'cat':{$exists:true},'age':{$lt:20},"cat.age":{$lt:10}},{'_id':0,'age':0}).pretty().count()
+
+----
+MAKING SURE THAT ONLY THOSE TEENAGERS ARE DISPLAYED WHOSE
+AGE IS LESS THAN 20 AND CAT EXISTS FOR THEM 
+WHOSE AGE IS LESS THAN 10 AND GT 0
+----
+>db.people.find({$and:[{'cat':{$exists:true},'age':{$lt:20},'cat.age':{$lt:10,$gt:0}}]}).pretty().count()^
+
+
+----------------------------------------------------
+
+NOTEl: HOW TO ACCESS NESTED FIELDS /DOCS IN MONGODB
+> db.people.find({"cat.name":"Frank Pirate"}).pretty()
+USING DOT(.)OPERATOR
+
+
+-------------------------------------------------------------------------------
+5. Exercise - Stockbrokers
+We are going to use some real data now. 
+The stocks json file is a list of all stocks traded 
+in the US in 2015. It's real data.
+
+Download the stocks.json file from here:
+
+http://nicholasjohnson.com/mongo/datasets/stocks.json
+
+We can import a JSON file from the command line using 
+the mongoimport shell command.
+
+Enter the following into a terminal. 
+Don't enter this into the Mongo console or it won't work.
+
+mongoimport --db stocks --collection stocks --file stocks.json
+
+LEAVING FOR NOW
+---------------------------------------------------------------------
+
+
+
+19. $where OPERATOR
+
+We can even filter using an arbitrary JavaScript
+ expression using $where. 
+ This will allow us to compare two fields in a
+ single document.
+
+db.sandwiches.find({
+  $where: "this.jam && this.peanutButter && this.jam > this.peanutButter"
+})
+Here we find all the sandwiches with jam and peanut
+ butter where the jam quotient outweighs the peanut
+ butter.
+
+Warning: It's easy to overuse $where since it appears 
+to do everything with plain old JavaScript. 
+$where is eval-ing a JavaScript expression and as such 
+is slow. Mongo can make no optimisations here, and must 
+execute the JavaScript on every single document in the
+ collection. Prefer the native operators where possible.
+ 
+ 
+ -------------
+ 
+Exercise - $where
+
+Use $where to find all the people who have a cat.
+>db.people.find({$where:"this.cat"},{'_id':0,'age':0}).pretty()
+
+
+Find all the people who are younger than their cats.
+ Remember, not everyone has a cat, so you will need to 
+ use a boolean && to filter out the non-cat owners.
+
+>db.people.find({$where:'this.cat && this.cat.age>this.age'},{'_id':0}).pretty().limit(4)
+ 
+ 
+----------------------------------------------------------------------------------------
+6. Exercises ON PROJECTIONS
+
+Use projection to format your array of people. 
+We want only the names.
+
+>db.people.find({},{'name':1,'_id':0}).pretty()
+
+Output just the names of the people who are 99 years old
+
+>db.people.find({'age':99},{'name':1,'_id':0}).pretty()
+
+
+Output only the cats, like this
+> db.people.find({'cat':{$exists:true}},{'_id':0,'cat':1}).pretty()
+
+-----------------------------------------------------------------------------
+
+7. Exercises on Aggregation
+
+------------------------------
+7.a COUNTING
+
+
+Count will convert our result set into a number.
+ We can use it in two ways. We can either chain it:
+
+db.people.find({sharks: 3}).count()
+or we can use it in place of find:
+
+db.people.count({sharks: 3})
+To count the people who have exactly three sharks.
+
+
+------------
+Exercise - 
+------------
+
+count the people
+
+
+Find out how many people there are in total.
+>db.people.count()
+
+Using your collection of people, and $exists, 
+tell me how many people have cats.
+> db.people.count({'cat':{$exists:true}})
+189
+> db.people.find({'cat':{$exists:true}}).count()
+189
+
+
+
+Use $where to count how many people have cats which are older than them.
+
+> db.people.find({$where:'this.cat && this.cat.age>this.age'}).count()
+14
+
+
+vDIFFERENCE IN USING WHERE WITH = AND == OPEARTORS
+>db.people.find({$where:'this.age=50'}).count()
+996
+> db.people.find({$where:'this.age==50'}).count()
+0
+
+----------------------------------------
+
+
+
+'Visit this link learn how to optimize the count operation
+for fast querying operation in mongoDB'
+
+---------
+https://www.compose.com/articles/counting-and-not-counting-with-mongodb/
+----------
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+
+20. SORT IN MONGODB
+
+.sort({key:1})
+sorts in ascending order
+
+.sort({key:-1})
+sorts in descending order
+
+
+
+
+----------------------------------------------------------------------------------
+------------------------
+7.b Limit and Skip and Sort
+Limit will allow us to limit the results in the output 
+set. 
+
+Skip will allow us to to offset the start. 
+
+Between them they give us pagination.
+
+Exercise - Limit the people
+
+Give me the first 5 people
+>db.people.find({},{'name':1}).limit(5)
+
+
+Give me the next 5 people
+>db.people.find({},{'name':1}).limit(5).skip(5)
+
+Give me the names and ages of the oldest 5 
+pensioners with piranhas
+
+
+
+----------------------------------------------------------------------
+Exercises ON SORT AND LIMIT AND SKIP
+
+Give me the names and ages of the oldest 5 
+pensioners with piranhas
+
+>db.people.find({},{'_id':0,'name':1,'age':1}).limit(5).sort({age:-1})
+
+Give me the names and ages of the youngest 5 teenagers 
+with cats, where the cats have the word "Yolanda" in 
+their name.
+
+Find the youngest 1 person with a cat
+> db.people.find({cat:{$exists:true}}).sort({'age':1}).limit(1)	
+
+
+Give me just the name of the youngest 1 person with a cat and a piranha.
+>db.people.find({cat:{$exists:true}},{"_id":0,'name':1}).sort({'age':1}).limit(1)
+
+Give me the 5 oldest cats
+db.people.find({cat:{$exists:true}},{"_id":0,'name':1}).sort({'age':-1}).limit(5)
+
+Give me the next 5 oldest cats
+ db.people.find({cat:{$exists:true}},{"_id":0,'name':1}).sort({'age':-1}).limit(5).skip(5)
+ 
+-------------------------------------------------------------------------------------------
+
+ db.findOne()
+ 
+ used to search for only one document based on given query
+
+---------------------------------------------------------------------------
+
+21: REGULAR EXPRESSION TEXT SEARCH IN MONGODB
+
+Find everyone who has the word 'Pirate' in their name. 
+You will need to use a regular expression to do this. {name: /Pirate/}
+
+> db.people.find({'name':/Pirate/}).count()
+
+
+------------------------------------------------------------------
+
+
+22. Removing documents
+
+Exercise - remove all the people.
+It's time for a cull. Delete all the 50 year olds
+
+db.people.remove({'age':50})
+
+---------------------------------------------------------------------------------
+
+23. Aggregation Framework
+
+7.c) Filtering the pipeline with $match
+We can use the aggregation pipeline to filter a 
+result set. This is more or less analogous to find,
+and is probably the most common thing we want to do.
+
+---
+USING aggregate.$match instead of find(exists)
+---
+
+'example1'
+ we want to list only people who have cats 
+ (where cat is a sub-document)
+ , we would probably do something like this this:
+
+ 
+ db.people.aggregate({
+  '$match' : {
+    cat:{
+      $exists: true
+    }
+  }
+})
+
+
+
+'example 2'
+Use the people dataset. Match all the people who are 
+10 years old who have ten year old cats.
+
+>db.people.aggregate({$match:{$and:[{'cat.age':10},{'age':10}]}})
+
+'example3'
+
+Match all the people who are over 80 years old, and who's cats are over 15 years old.
+
+>db.people.aggregate({$match:{$and:[{'age':{$gt:80}},{'cat.age':{$gt:15}}]}}).pretty()
+
+----
+When to use match
+Matching is quick but not smart. 
+It's designed to limit the result set, 
+so that the rest of the pipeline can run more quickly.
+ When used with project we can match against fields that 
+ don't exist in our result set. 
+ This is a powerful and useful feature.
+---
+
+
+
+------------------------------------------------------------------------------------------------------
+The Mongo Aggregation Framework
+--------------------------------------------------------------------
+
+24. Modifying a stream with $project
+
+using $project we can:
+
+modify all the documents in the pipeline. 
+We can remove elements, 
+allow elements through, 
+rename elements, and 
+even create brand new elements based on expressions.
+
+
+'example1: RESTRICTING FIELDS THAT PASS THROUGH db.insert command'
+
+{
+  "firstName" : "Dave",
+  "lastName" : "Jones",
+  "code" : "74wy zphz",
+  "usedAt" : ISODate("2015-06-13T17:47:20.423Z"),
+  "email" : "123@gmail.com"
+},
+{
+  "firstName" : "Stuart",
+  "lastName" : "Hat",
+  "code" : "7uwz e3cw",
+  "usedAt" : ISODate("2015-06-13T17:47:50.489Z"),
+  "email" : "456@gmail.com"
+}
+...
+We can use project to restrict the fields that are passed through. We pick the fields we like and set true to pass them through unchanged.
+
+db.entrycodes.aggregate(
+  {
+    '$project' : {
+      email: true,
+      code: true
+    }
+  }
+)
+
+Removing the id
+Remove the id field bay passing _id: false.
+
+This will yield a set something like the following:
+
+[
+  {
+    "code" : "7uwy zphz",
+    "email" : "123@gmail.com"
+  },
+  {
+    "code" : "7uwz eccw",
+    "email" : "123@gmail.com"
+  }
+]
+
+
+
+'example2: Renaming fields'
+
+however, here using $project to rename a field does
+not actually update the fieldname in present documents
+but does provide output for written query with
+updated field names
+
+
+>db.people.aggregate({'$project' : { caties:"$cat" }})
+
+{
+        "_id" : ObjectId("5b8e7b35b9c7c5e3731853b6"),
+        "caties" : {
+                "name" : "Malone Elbow",
+                "age" : 7
+}
+
+'example3: CHAINING $match and $project together'
+
+'WE USE FIRST MATCH TO FIND FIELD BASED ON GIVEN CRIETERIA
+AND THEN USE PROJECT TO DEFINE THE FIELDS THAT WE WANT TO
+BE DISPLAYED'
+
+CHECKING WHETHER CATS FIELD EXISTS AND THEN DISPLAYING ONLY USER DEFINED FIELDS
+>db.people.aggregate( { $match: {cat:{$exists:true}} }, { $project:{ name:true, age:true, _id:false } } )
+
+> db.people.aggregate({$match: {name:/Shubham/} }, { $project:{ name:true, age:true, _id:false } } )
+{ "name" : "Shubham Gupta", "age" : 22 }
+
+'Good exercise'
+
+Now use $project to pull out only the cat names. You will need to use the dot syntax: '$cat.name'.
+db.people.aggregate({ $match:{cat:{$exists:true}} },{$project:{"cat.name":1,_id:0}})
+
