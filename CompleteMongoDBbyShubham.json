@@ -1302,3 +1302,131 @@ CHECKING WHETHER CATS FIELD EXISTS AND THEN DISPLAYING ONLY USER DEFINED FIELDS
 Now use $project to pull out only the cat names. You will need to use the dot syntax: '$cat.name'.
 db.people.aggregate({ $match:{cat:{$exists:true}} },{$project:{"cat.name":1,_id:0}})
 
+
+'example4: Creating new fields with $project'
+We can use project to add new fields to our 
+documents based on expressions.
+
+Say we had a list of people, like so:
+
+{firstName: "Chinstrap", surname: "McGee"}
+{firstName: "Bootle", surname: "Cheeserafter"}
+{firstName: "Mangstrang", surname: "Fringlehoffen"}
+We can use project to compose a name field, like so:
+
+db.entrycodes.aggregate(
+  {
+    $project: {
+      name: {$concat: ['$firstName', ' ', '$surname']}
+    }
+  }
+)
+This will give us results like this:
+
+{ "name" : "Dave Smith" },
+{ "name" : "Mike Moo" }
+
+'example 5: Conditional fields with $cond'
+
+We can set the value of a field using a boolean 
+expression using $cond. 
+There are a couple of ways to use $cond.
+ You may wish to review the documentation here:
+ http://docs.mongodb.org/manual/reference/operator/aggregation/cond/
+
+Say we have a set of customers, and some of them have 
+complaints. We might set a flag on all of the unhappy 
+customers like so:
+
+>db.customers.aggregate(
+  {
+    $project:{
+      unhappy: {
+        $cond: { if: '$complaints', then: true, else: false }
+      },
+      complaints: '$complaints'
+    }
+  }
+)
+
+Unhappy will either be true or false.
+
+-----------------------------
+Exercise - Add a hasCat field
+Use projection to add a hasCat field. 
+This might form the basis for a future grouping or
+ counting.
+
+>db.people.aggregate({$project:{hasCat:{$cond:{if: '$cat',then:true,else:false}},cat:'$cat'}})
+
+------------------------------
+
+===================================================================
+ONE THING TO REMEMBER ABOUT AGGREGATION FRAMEWORK
+IS THAT EVEN THOUGH WE CAN RENAME ,UPDATE,ADD A NEW FIELD,
+USE PROJECT AND MATCH TOGETHER,
+THEY ARE ONLY OUTPUT ORIENTED.
+
+THAT MEANS THE OUTPUT WILL BE YOUR REQUIRED JSON AS 
+PER YOUR AGGREGATE FRAMEWORK BUT IT WONT MAKE ANY UPDATES
+TO THE EXISTING DOCS OR COLLECTIONS
+=================================================================
+
+
+25. Grouping with $group
+
+$group allows us to group a collection according to 
+criteria. We can group by fields that exist in the data,
+ or we can group by expressions that create new fields.
+
+Group will operate on a set of documents in the pipeline,
+ and output a new set of documents out the bottom.
+
+We group using the _id field. This will create a new _id 
+for each group that will be an object containing the 
+grouping criteria.
+
+
+'Exercise 1'
+
+Try this out on your people data set. 
+
+
+You should get a list of distinct names.
+> db.people.aggregate({$group:{_id:"$name"}}).pretty()
+
+
+The output is untidy, each name output in the id field.
+Add a $project step to the popeline to rename the '_id' 
+field to 'name'.
+
+>db.people.aggregate({$group:{_id:"$name"}},{$project:{name:'$_id',_id:0}}).pretty()
+
+
+-----------------------------------------------
+'Exercise - Grouping by object'
+Try out the above. Notice that the _id field 
+is now an object. 
+Use $project to reformat the data. 
+You now have distinct names and ages.
+
+> db.people.aggregate({$group:{_id:{name:'$name',age:'$age'}}},{$project:{data:'$_id',_id:0}})
+
+'Exercise - Count everything'
+
+Count all the people. How many are there?
+> db.people.aggregate({$group:{_id:1,count:{$sum:1}}})
+{ "_id" : 1, "count" : 996 }
+
+counting the number of times each names has occured 
+in our collections
+
+> db.people.aggregate({$group:{_id:"$name",count:{$sum:1}}})
+
+
+counting the number of cats of same name 
+
+>db.people.
+----------------------------------------------
+
+
